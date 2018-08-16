@@ -28,32 +28,13 @@
     (check-equal? (get-shortest-answer law vans) (list 0 1.))
     (check-equal? (get-shortest-answer law (reverse vans)) (list 1 1.)))
 
-(let* (
-    [answers (list (vector 0))]
-    [d1 3]
-    [law1-ansi-dist (list 1 2 d1)]
-    [law2-law2i (list (vector 5) 11)])
-    (check-equal? (update-law answers law1-ansi-dist law2-law2i) law1-ansi-dist))
 
 (let* (
-    [answers (list (vector 0))]
-    [d1 7]
-    [law1-ansi-dist (list 1 2 d1)]
-    [law2-law2i (list (vector 5) 11)]
-    [law2-ansi-dist (list 11 0 5.)])
-    (check-equal? (update-law answers law1-ansi-dist law2-law2i) law2-ansi-dist))
+    [question (vector 0)]
+    [question2 (vector 1)]
+    [laws (list (vector -1.) (vector 2.) )]
+    [answers (list (vector 0.) (vector 1.) )])
 
-(let* (
-    [answers (list (vector 0.))]
-    [laws (list (vector 1.))]
-    [ansind-lawind-dist (list 0 0 1.)])
-    (check-equal? (get-shortest-law-answer laws answers) ansind-lawind-dist))
-
-(let* (
-    [answers (list (vector 0.) (vector 1.) )]
-    [laws (list (vector -3.) (vector 2.) )]
-    [ansind-lawind-dist (list 1 1 1.)])
-    (check-equal? (get-shortest-law-answer laws answers) ansind-lawind-dist))
-
-
+    (check-equal? (get-best-law question laws answers) (list 2. 0 0))
+    (check-equal? (get-best-law question2 laws answers) (list 2. 1 1)))
 

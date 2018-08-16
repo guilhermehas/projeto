@@ -8,8 +8,7 @@ dif
 dist
 enumerate-list
 get-shortest-answer
-update-law
-get-shortest-law-answer
+get-best-law
 )
 
 ;obs: Para calculo de distancia, foi usada distancia euclideana.
@@ -44,24 +43,18 @@ get-shortest-law-answer
     (define question-enum (argmin get-distance-law-question questions-enum))
     (match-define (list question i) question-enum)
     (define dist-question-answer (dist question law))
-    (list i dist-question-answer)
-)
+    (list i dist-question-answer))
 
-(define (update-law answers old-lawi-ansi-dist new-law-lawi)
-    (match (list old-lawi-ansi-dist new-law-lawi)
-        [(list 
-            (list lawi ansi old-dist)
-            (list new-law new-lawi))
-                (let* (
-                    [new-ansi-dist (get-shortest-answer new-law answers)])
-                    (match new-ansi-dist
-                        [(list new-ansi new-dist)
-                            (if (< new-dist old-dist)
-                                (list new-lawi new-ansi new-dist)
-                                old-lawi-ansi-dist)]))]))
 
-(define (get-shortest-law-answer laws answers)
-    (define first-term (list -1 -1 +inf.f))
-    (define (up-law law term)
-        (update-law answers term law))
-    (foldl up-law first-term (enumerate-list laws 0)))
+;cria lista de distancia entre lei e respostas
+(define (get-best-law question laws answers)
+    (define laws-enum (enumerate-list laws 0))
+
+    (define (update-law-dist-lawid-answerid law-id)
+        (match-define (list law idlaw) law-id)
+        (match-define (list id-answer dist-law-answer) (get-shortest-answer law answers))
+        (define law-dist (dist question law))
+        (list (+ law-dist dist-law-answer) idlaw id-answer))
+
+    (define updated-laws (map update-law-dist-lawid-answerid laws-enum))
+    (argmin (lambda (x) (first x)) updated-laws))
