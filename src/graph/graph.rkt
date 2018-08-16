@@ -7,7 +7,6 @@ norm
 dif
 dist
 enumerate-list
-update-new-answer
 get-shortest-answer
 update-law
 get-shortest-law-answer
@@ -36,28 +35,17 @@ get-shortest-law-answer
             [el (cons (list (first el) i) (aux (rest el) (add1 i)))]))
     (aux lista start))
 
-;funçao que sera aplicada em get-shortest-answer ao usar foldl na lista de answers.
-;obs: deveria ter opcao de msg de erro caso nao retorne a lista indicadaem match
-(define (update-new-answer law last-min-dist-index answer-index)
-    (match (list last-min-dist-index answer-index)
-        [(list (list index dist-old) (list new-answer new-index))
-        (let* (
-            [dist-new (dist law new-answer)])
-            (if (< dist-new dist-old)
-                (list new-index dist-new)
-                (list index dist-old)))]))
-
 ;cria lista de distancia entre lei e respostas
-(define (get-shortest-answer law answers)
-    (match answers
-        [(list) (list -1 0.)]
-        [(list a) (list 0 (dist law a))]
-        [ans
-        (let*(
-            [f (first ans)]
-            [r (rest ans)]
-            [d0 (dist law f)])
-            (foldl (lambda (x y) (update-new-answer law y x)) (list 0 d0) (enumerate-list r 1)))]))
+(define (get-shortest-answer law questions)
+    (define (get-distance-law-question question-enum)
+        (match-define (list question i) question-enum)
+        (dist question law))
+    (define questions-enum (enumerate-list questions 0))
+    (define question-enum (argmin get-distance-law-question questions-enum))
+    (match-define (list question i) question-enum)
+    (define dist-question-answer (dist question law))
+    (list i dist-question-answer)
+)
 
 (define (update-law answers old-lawi-ansi-dist new-law-lawi)
     (match (list old-lawi-ansi-dist new-law-lawi)

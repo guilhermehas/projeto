@@ -24,9 +24,6 @@
 
     [vans (list (vector 1) (vector 2))])
 
-    (check-equal? (update-new-answer law (list 10 4.) ans2) ans2withD)
-    (check-equal? (update-new-answer law (list 3 1.) ans1) ans1withD)
-
     (check-equal? (get-shortest-answer law (rest vans)) (list 0 2.))
     (check-equal? (get-shortest-answer law vans) (list 0 1.))
     (check-equal? (get-shortest-answer law (reverse vans)) (list 1 1.)))
