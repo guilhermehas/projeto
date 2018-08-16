@@ -13,17 +13,22 @@ update-law
 get-shortest-law-answer
 )
 
+;obs: Para calculo de distancia, foi usada distancia euclideana.
+;calcula a norma de vetor.
 (define (norm vec)
     (sqrt (for/fold ([sum 0.0])
         ([x (in-vector vec)])
         (+ sum (* x x)))))
 
+;calcula a diferença entre cada elemento (v1-v2).
 (define (dif v1 v2)
     (vector-map - v1 v2))
 
+;define valor da distancia do vetor. 
 (define (dist v1 v2)
     (norm (dif v1 v2)))
 
+;constroi nova lista com valores enumerados.
 (define (enumerate-list lista start)
     (define (aux lista i)
         (match lista
@@ -31,6 +36,8 @@ get-shortest-law-answer
             [el (cons (list (first el) i) (aux (rest el) (add1 i)))]))
     (aux lista start))
 
+;funçao que sera aplicada em get-shortest-answer ao usar foldl na lista de answers.
+;obs: deveria ter opcao de msg de erro caso nao retorne a lista indicadaem match
 (define (update-new-answer law last-min-dist-index answer-index)
     (match (list last-min-dist-index answer-index)
         [(list (list index dist-old) (list new-answer new-index))
@@ -40,6 +47,7 @@ get-shortest-law-answer
                 (list new-index dist-new)
                 (list index dist-old)))]))
 
+;cria lista de distancia entre lei e respostas
 (define (get-shortest-answer law answers)
     (match answers
         [(list) (list -1 0.)]
