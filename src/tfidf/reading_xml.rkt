@@ -66,5 +66,3 @@
 (define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
 
 (xexpr->exam prova)
-
-(define (read-laws) 1)
