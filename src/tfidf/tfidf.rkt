@@ -12,4 +12,4 @@
             (group-by (lambda (x) x) list-string))))
 )
 
-(tf "guilherme foi Para a praia e foi para a fazenda")
+(tf "guilherme foi Para a praia e foi\n para\t\n a fazenda")
