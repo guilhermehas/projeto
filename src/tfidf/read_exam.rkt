@@ -10,6 +10,8 @@
 
  (provide
   read-exam
+  (struct-out question)
+  (struct-out item)
   )
 
 (define (prova->xexpr fp)

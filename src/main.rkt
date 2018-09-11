@@ -13,13 +13,13 @@
  "tfidf/tfidf.rkt"
  )
 
-;;; (define (P)
-;;;   (read-exam "data/raw/provas/2010-01.xml"))
+(define (P)
+  (read-exam "data/raw/provas/2010-01.xml"))
 
 (define (L)
   (read-law "data/raw/leis/"))
 
-;;;  (tf-idf (L))
+(last (L))
 
-(length (L))
-(vector-length (second (tf-idf (L))))
+(question-number (first (P)))
+;;; (vector-length (second (tf-idf (L))))

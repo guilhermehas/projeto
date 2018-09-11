@@ -20,7 +20,7 @@
     #:mode 'text))
 
 ; (article integer? string? )
-(struct article (art-number statement) #:transparent)
+(struct article (law art-number statement) #:transparent)
 ;obs: norma > titulo > capitulo > artigo > inciso, paragrafo > alinea, item
 
 
@@ -50,21 +50,22 @@
     [else null]))
 
 
-(define (article-list->article-struct list-of-articles); law-name) it's possible to add "law name" to know from which law is eache article
+(define (article-list->article-struct list-of-articles law); law-name) it's possible to add "law name" to know from which law is eache article
   (let ((counter 0))
     (for/list ((a list-of-articles))
       (set! counter (add1 counter))
-      (article counter a)))); a way would be here, changing the struct of article to include law-name
+      (article law counter a)))); a way would be here, changing the struct of article to include law-name
 
 ;;; (define lei (lei->xexpr "data/raw/leis/lei-8906.xml"))
 
-
-
 (define (read-law path)
-    (define path-list (directory-list "data/raw/leis/"))
+    (define path-list (map path->string (directory-list "data/raw/leis/")))
     (define laws '())
     (for ((path path-list))
-        (set! laws (append (lei->artigos (lei->xexpr 
-                    (string-append "data/raw/leis/" (path->string path))))
+        (set! laws (append
+                (article-list->article-struct
+                    (lei->artigos (lei->xexpr 
+                        (string-append "data/raw/leis/" path))) 
+                        (first (string-split path ".xml")))
                 laws)))
     laws)
