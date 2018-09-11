@@ -4,16 +4,16 @@
 
 (provide tf-idf)
 
-(define text-e "guilherme foi Para a praia e foi\n para\t\n a fazenda. Eu não fui para praia nem para a fazenda")
-(define text-f "joao foi para praia, rademacker para a fazenda mas não gostou")
-(define corpus `("texto sem contexto" ,text-e ,text-f))
+;;; (define text-e "guilherme foi Para a praia e foi\n para\t\n a fazenda. Eu não fui para praia nem para a fazenda")
+;;; (define text-f "joao foi para praia, rademacker para a fazenda mas não gostou")
+;;; (define corpus `("texto sem contexto" ,text-e ,text-f))
 
 
 ;; Set[String]
 (define stopwords
         (list->set
             (map (lambda (x) (string-trim x))
-                (file->lines "./stopwords.txt"))))
+                (file->lines "src/tfidf/stopwords.txt"))))
 
 
 (define (treat-strings string)

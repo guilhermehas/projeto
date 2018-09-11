@@ -10,12 +10,15 @@
  xml/path
  "tfidf/read_exam.rkt"
  "tfidf/read_law.rkt"
+ "tfidf/tfidf.rkt"
  )
 
 (define (P)
   (read-exam "data/raw/provas/2010-01.xml"))
 
 (define (L)
-  (read-law "data/raw/leis/lei-8906.xml"))
+  (read-law "data/raw/leis/"))
+
+;;;  (tf-idf (L))
 
 

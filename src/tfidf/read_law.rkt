@@ -10,9 +10,9 @@
  xml/path
 )
 
- (provide
-  read-law
-  )
+(provide
+ read-law
+)
 
 (define (lei->xexpr fp)
   (with-input-from-file fp
@@ -58,7 +58,13 @@
 
 ;;; (define lei (lei->xexpr "data/raw/leis/lei-8906.xml"))
 
+
+
 (define (read-law path)
-    (article-list->article-struct 
-        (lei->artigos 
-            (lei->xexpr path))))
+    (define path-list (directory-list "data/raw/leis/"))
+    (define laws '())
+    (for ((path path-list))
+        (set! laws (append (lei->artigos (lei->xexpr 
+                    (string-append "data/raw/leis/" (path->string path))))
+                laws)))
+    laws)
