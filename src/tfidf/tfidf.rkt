@@ -2,22 +2,24 @@
 
 (require data-science)
 
+(provide tf-idf)
+
 (define text-e "guilherme foi Para a praia e foi\n para\t\n a fazenda. Eu não fui para praia nem para a fazenda")
 (define text-f "joao foi para praia, rademacker para a fazenda mas não gostou")
+(define corpus `("texto sem contexto" ,text-e ,text-f))
+
 
 ;; Set[String]
-(define stopwords  
-        (list->set 
+(define stopwords
+        (list->set
             (map (lambda (x) (string-trim x))
-                (file->lines "src/tfidf/stopwords.txt"))))
+                (file->lines "./stopwords.txt"))))
 
 
 (define (treat-strings string)
     (filter-not (λ (e) (set-member? stopwords e))
-    (string-split 
-        (remove-punctuation
-        (string-downcase 
-        (string-normalize-spaces string))))))
+    ((compose string-split remove-punctuation string-downcase string-normalize-spaces) string)))
+                         
 
 ;; string --> (list of (list of 'str' float))
 (define (string->tokens string)
@@ -28,12 +30,5 @@
 
 ;;; (list of strings) --> list of (list of strings) and array of floats
 (define (tf-idf corpus)
-    (map string->tokens corpus))
-
-(tf-idf (list text-e text-f))
-
-;;; ;;; Convert each document to a list of term frequencies, passing both
-;;; ;;; to dtm
-;;; (dtm (string->tokens text-e)
-;;;      (string->tokens text-f))
+    (apply dtm (map string->tokens corpus)))
 

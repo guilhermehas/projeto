@@ -8,6 +8,10 @@
  xml/path
  )
 
+ (provide
+  read-exam
+  )
+
 (define (prova->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
@@ -53,6 +57,7 @@
                 (get-statement xelems)
                 (get-items xelems)))))
 
-(define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
+;;; (define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
 
-(xexpr->exam prova)
+(define (read-exam path)
+  (xexpr->exam (prova->xexpr path)))
