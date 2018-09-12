@@ -26,20 +26,16 @@
      "Solve OAB exams through tf-idf"
      "---------------------"
      #:once-each
-     [("--lp" "--laws-path") LAWSPATH
+     [("-l" "--laws-path") lawspath
                              "Setting path to dir where the laws are archived"
-                             (laws-path LAWSPATH)]
-     [("--ep" "--exams-path") EXAMSPATH
+                             (laws-path lawspath)]
+     [("-e" "--exams-path") exampath
                              "Setting path to dir where the laws are archived"
-                             (exams-path EXAMSPATH)]
+                             (exams-path exampath)]
  
      #:args (exam)
 
      (string-append (exams-path) exam)))
-
-  ;(define exam (read-exam "data/raw/provas/2010-01.xml"))
-
-  ;(define laws (read-law "data/raw/leis/"))
 
   (define laws (read-law laws-path))
   (define exam (read-exam cmd-line))
