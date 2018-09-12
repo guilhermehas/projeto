@@ -35,7 +35,7 @@ get-best-law-cos
         (* i j)))
 
 (define (cos-dist v1 v2)
-    (- (/
+    (- 1 (/
         (scalar-prod v1 v2)
         (sqrt (*
             (scalar-prod v1 v1)

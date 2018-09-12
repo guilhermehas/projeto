@@ -17,10 +17,10 @@
 (check-equal? (scalar-prod (vector) (vector)) 0)
 (check-equal? (scalar-prod (vector 2 3) (vector 100 1000)) 3200)
 
-(check-equal? (cos-dist (vector 1) (vector 3)) -1)
-(check-equal? (cos-dist (vector 1 0) (vector 3 0)) -1)
-(check-equal? (cos-dist (vector 0 1) (vector 3 0)) 0)
-(check-equal? (cos-dist (vector 2 0) (vector 3 4)) -3/5)
+(check-equal? (cos-dist (vector 1) (vector 3)) 0)
+(check-equal? (cos-dist (vector 1 0) (vector 3 0)) 0)
+(check-equal? (cos-dist (vector 0 1) (vector 3 0)) 1)
+(check-equal? (cos-dist (vector 2 0) (vector 3 4)) 2/5)
 
 
 (let* (
@@ -54,6 +54,6 @@
     [laws (list (vector 3 4) (vector 1 0) )]
     [answers (list (vector 1 0) (vector 0 1) )])
 
-    (check-equal? (get-best-law-cos question laws answers) (list -8/5 0 1))
-    (check-equal? (get-best-law-cos question2 laws answers) (list -2 1 0)))
+    (check-equal? (get-best-law-cos question laws answers) (list 2/5 0 1))
+    (check-equal? (get-best-law-cos question2 laws answers) (list 0 1 0)))
 
