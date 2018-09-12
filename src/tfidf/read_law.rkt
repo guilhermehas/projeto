@@ -12,6 +12,7 @@
 
 (provide
  read-law
+(struct-out article)
 )
 
 (define (lei->xexpr fp)
