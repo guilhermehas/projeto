@@ -14,6 +14,15 @@
 (check-equal? (enumerate-list (list 2) 0) (list (list 2 0)) "enumerate list of element 2")
 (check-equal? (enumerate-list (list 2) 2) (list (list 2 2)) "enumerate list of element 2")
 
+(check-equal? (scalar-prod (vector) (vector)) 0)
+(check-equal? (scalar-prod (vector 2 3) (vector 100 1000)) 3200)
+
+(check-equal? (cos-dist (vector 1) (vector 3)) -1)
+(check-equal? (cos-dist (vector 1 0) (vector 3 0)) -1)
+(check-equal? (cos-dist (vector 0 1) (vector 3 0)) 0)
+(check-equal? (cos-dist (vector 2 0) (vector 3 4)) -3/5)
+
+
 (let* (
     [law (vector 0)]
     [ans1 (list (vector 1) 3)]
@@ -37,4 +46,14 @@
 
     (check-equal? (get-best-law question laws answers) (list 2. 0 0))
     (check-equal? (get-best-law question2 laws answers) (list 2. 1 1)))
+
+
+(let* (
+    [question (vector 0 1)]
+    [question2 (vector 1 0)]
+    [laws (list (vector 3 4) (vector 1 0) )]
+    [answers (list (vector 1 0) (vector 0 1) )])
+
+    (check-equal? (get-best-law-cos question laws answers) (list -8/5 0 1))
+    (check-equal? (get-best-law-cos question2 laws answers) (list -2 1 0)))
 

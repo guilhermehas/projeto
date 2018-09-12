@@ -13,7 +13,7 @@
 (define stopwords
         (list->set
             (map (lambda (x) (string-trim x))
-                (file->lines "src/tfidf/stopwords.txt"))))
+                (file->lines "tfidf/stopwords.txt"))))
 
 
 (define (treat-strings string)
