@@ -1,6 +1,7 @@
 #lang racket
 
 (require data-science)
+(require "stopwords.rkt")
 
 (provide tf-idf)
 
@@ -10,7 +11,7 @@
 
 
 ;; Set[String]
-(define stopwords
+#;(define stopwords
         (list->set
             (map (lambda (x) (string-trim x))
                 (file->lines "tfidf/stopwords.txt"))))
