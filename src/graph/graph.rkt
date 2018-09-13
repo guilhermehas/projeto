@@ -136,4 +136,4 @@ get-best-law-cos
     (values get-shortest-answer get-best-law))
 
 (define-values (get-shortest-answer get-best-law) (funcs-from dist))
-(define-values (_ get-best-law-cos) (funcs-from cos-dist))
+(define-values (_ get-best-law-cos) (funcs-from dist))

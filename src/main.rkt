@@ -54,7 +54,8 @@
     (map list->vector (array->list* array)))
     
 
-
+  (define (apply-tfidf question list-laws)
+    (displayln "Calculating TFIDF")
     (define tfidf-matrix (second (tf-idf (append question list-laws))))
     (define question-vector (array->vector (array-slice-ref tfidf-matrix 
                                                             (list (list 0) (::)))))
@@ -68,12 +69,14 @@
     
   (define (apply-model tfidf-func question list-laws)
     (let-values (((question answers laws) (tfidf-func question list-laws)))
+      (displayln "Applying Model")
       (get-best-law question laws answers)))
 
   (define (convert-output question-struct laws result) 
     (define article (list-ref laws (second result)))
+    (define to-letter (list "A" "B" "C" "D"))
     (list (question-number question-struct) 
-          (third result)
+          (list-ref to-letter (third result))
           (article-law article)
           (article-art-number article)))
 
@@ -92,7 +95,7 @@
        (set! output
              (cons (convert-output question-exam laws
               (apply-model apply-tfidf question list-laws)) output)))
-    output
+    (reverse output)
     )
 
   (main laws-path cmd-line))
