@@ -54,7 +54,7 @@
     (map list->vector (array->list* array)))
     
 
-  (define (apply-tfidf question list-laws)
+
     (define tfidf-matrix (second (tf-idf (append question list-laws))))
     (define question-vector (array->vector (array-slice-ref tfidf-matrix 
                                                             (list (list 0) (::)))))
