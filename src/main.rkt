@@ -37,9 +37,6 @@
 
      (string-append (exams-path) exam)))
 
-  (define laws (read-law laws-path))
-  (define exam (read-exam cmd-line))
-
   (define (prepare-one-exam exam)
     (define questions-answers '())
     (for ((question exam))
@@ -69,21 +66,34 @@
        (array-slice-ref tfidf-matrix (list (:: 6 #f 1) (::)))))
     (values question-vector answers-vector laws-vector))
     
-
-
-  (define list-questions (prepare-one-exam exam))
-  (define list-laws (prepare-laws laws))
-
   (define (apply-model tfidf-func question list-laws)
     (let-values (((question answers laws) (tfidf-func question list-laws)))
       (get-best-law question laws answers)))
-    
 
+  (define (convert-output question-struct laws result) 
+    (define article (list-ref laws (second result)))
+    (list (question-number question-struct) 
+          (third result)
+          (article-law article)
+          (article-art-number article)))
 
-  ;;; (apply-tfidf (first list-questions) list-laws)
-  (apply-model apply-tfidf (second list-questions) list-laws))
+  (define (main laws-path cmd-line)
 
-  
+    (define laws (read-law laws-path))
+    (define exam (read-exam cmd-line))
 
+    (define list-questions (prepare-one-exam exam))
+    (define list-laws (prepare-laws laws))
 
+    (define output (list))
+    (for ((question list-questions)
+          (question-exam exam))
+       (displayln (question-number question-exam))
+       (set! output
+             (cons (convert-output question-exam laws
+              (apply-model apply-tfidf question list-laws)) output)))
+    output
+    )
+
+  (main laws-path cmd-line))
   
