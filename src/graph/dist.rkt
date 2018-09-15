@@ -4,6 +4,8 @@
     norm
     dif
     dist
+    scalar-prod
+    cos-dist
 )
 
 
