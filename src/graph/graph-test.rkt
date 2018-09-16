@@ -6,14 +6,15 @@
 (require "graph.rkt")
 
 (block
-    (define node1 (node "n1" (vector 0) (list)))
+    (define node1 (node "n1" (vector 0)))
     (define graph (list node1))
     (define-values (distances previous) (dijkstra graph node1))
     (check-equal? (dict-ref distances node1) 0))
 
 (block
-    (define node1 (node "n1" (vector 0) (list)))
-    (define node2 (node "n2" (vector 1) (list node1)))
+    (define node1 (node "n1" (vector 0)))
+    (define node2 (node "n2" (vector 1)))
+    (set-node-neineighbors! node2 (list node1))
     (set-node-neineighbors! node1 (list node2))
 
     (define graph (list node1 node2))
@@ -24,14 +25,14 @@
 )
 
 (block
-    (define question (node "q" (vector 0) (list)))
+    (define question (node "q" (vector 0)))
     
-    (define art1 (node "art1" (vector 1) (list)))
-    (define art2 (node "art2" (vector -2) (list)))
+    (define art1 (node "art1" (vector 1)))
+    (define art2 (node "art2" (vector -2)))
     (define articles (list art1 art2))
 
-    (define ans1 (node "ans1" (vector -3) (list)))
-    (define ans2 (node "ans2" (vector 7) 0))
+    (define ans1 (node "ans1" (vector -3)))
+    (define ans2 (node "ans2" (vector 7)))
     (define answers (list ans1 ans2))
 
     (define graph (to-graph question articles answers))

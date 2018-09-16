@@ -17,7 +17,9 @@
     get-distance-article-answer
 )
 
-(struct node (document vector [neineighbors #:mutable]) #:transparent)
+(struct node (document vector [neineighbors #:mutable #:auto])
+    #:auto-value (list)
+    #:transparent)
 
 (define (dij-from dist)
     (define (Dijkstra graph source)
