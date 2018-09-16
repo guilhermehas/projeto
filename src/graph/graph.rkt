@@ -1,49 +1,50 @@
 #lang racket
 
+(require racket/block)
 (require racket/trace)
-(require math/matrix)
+(require racket/undefined)
+(require data/heap)
+(require dyoo-while-loop)
+
 (require "dist.rkt")
 
 (provide
-    enumerate-list
-    get-shortest-answer
-    get-best-law
+    node
+    set-node-neineighbors!
+    dijkstra
 )
 
-;constroi nova lista com valores enumerados.
-(define (enumerate-list lista start)
-    (define (aux lista i)
-        (match lista
-            [(list) (list)]
-            [el (cons (list (first el) i) (aux (rest el) (add1 i)))]))
-    (aux lista start))
+(struct node (document vector [neineighbors #:mutable]) #:transparent)
 
-(define (funcs-from dist)
-    ;cria lista de distancia entre lei e respostas
-    (define (get-shortest-answer law questions)
-        (define (get-distance-law-question question-enum)
-            (match-define (list question i) question-enum)
-            (dist question law))
-        (define questions-enum (enumerate-list questions 0))
-        (define question-enum (argmin get-distance-law-question questions-enum))
-        (match-define (list question i) question-enum)
-        (define dist-question-answer (dist question law))
-        (list i dist-question-answer))
+(define (dij-from dist)
+    (define (Dijkstra graph source)
+        (define (operator-less a b)
+            (< (cdr a) (cdr b)))
+        (define node-queue (make-heap operator-less))
+        (define old-distances-from-source
+            (for/fold ([distances (hash)])
+                ([node graph])
+                (heap-add! node-queue )
+                (dict-set distances node +inf.f)))
+        (define distances-from-source (dict-set old-distances-from-source source 0))
+        (define previous (hash))
 
+        (while (not (zero? (heap-count node-queue)))
+            (match-define (cons u u-dist) (heap-min node-queue))
+            (define u-vector (node-vector u))
+            (define u-neigs (node-neineighbors u))
+            (heap-remove-min! node-queue)
+            (for ([v u-neigs])
+                (define v-vector (node-vector v))
+                (define alt (+ u-dist (dist u-vector v-vector)))
+                (if (< alt (dict-ref distances-from-source v))
+                    (block
+                        (dict-set! distances-from-source v alt)
+                        (dict-set! previous v u))
+                    void)))
+        
+        (values distances-from-source previous))
 
-    ;cria lista de distancia entre lei e respostas
-    (define (get-best-law question laws answers)
-        (define laws-enum (enumerate-list laws 0))
+    Dijkstra)
 
-        (define (update-law-dist-lawid-answerid law-id)
-            (match-define (list law idlaw) law-id)
-            (match-define (list id-answer dist-law-answer) (get-shortest-answer law answers))
-            (define law-dist (dist question law))
-            (list (+ law-dist dist-law-answer) idlaw id-answer))
-
-        (define updated-laws (map update-law-dist-lawid-answerid laws-enum))
-        (argmin (lambda (x) (first x)) updated-laws))
-
-    (values get-shortest-answer get-best-law))
-
-(define-values (get-shortest-answer get-best-law) (funcs-from dist))
+(define dijkstra (dij-from dist))
