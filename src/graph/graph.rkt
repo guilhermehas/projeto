@@ -1,49 +1,77 @@
 #lang racket
 
+(require racket/block)
 (require racket/trace)
-(require math/matrix)
+(require racket/undefined)
+(require data/heap)
+(require dyoo-while-loop)
+
 (require "dist.rkt")
 
 (provide
-    enumerate-list
-    get-shortest-answer
-    get-best-law
+    node
+    node-neineighbors
+    set-node-neineighbors!
+    dijkstra
+    to-graph
+    get-distance-article-answer
 )
 
-;constroi nova lista com valores enumerados.
-(define (enumerate-list lista start)
-    (define (aux lista i)
-        (match lista
-            [(list) (list)]
-            [el (cons (list (first el) i) (aux (rest el) (add1 i)))]))
-    (aux lista start))
+(struct node (document vector [neineighbors #:mutable]) #:transparent)
 
-(define (funcs-from dist)
-    ;cria lista de distancia entre lei e respostas
-    (define (get-shortest-answer law questions)
-        (define (get-distance-law-question question-enum)
-            (match-define (list question i) question-enum)
-            (dist question law))
-        (define questions-enum (enumerate-list questions 0))
-        (define question-enum (argmin get-distance-law-question questions-enum))
-        (match-define (list question i) question-enum)
-        (define dist-question-answer (dist question law))
-        (list i dist-question-answer))
+(define (dij-from dist)
+    (define (Dijkstra graph source)
+        (define (operator-less a b)
+            (< (cdr a) (cdr b)))
+        (define node-queue (make-heap operator-less))
+        (heap-add! node-queue (cons source 0))
 
+        (define distances-from-source (make-hash))
+        (for ([node graph])
+            (dict-set! distances-from-source node +inf.f))
 
-    ;cria lista de distancia entre lei e respostas
-    (define (get-best-law question laws answers)
-        (define laws-enum (enumerate-list laws 0))
+        (dict-set! distances-from-source source 0)
+        (define previous (make-hash))
 
-        (define (update-law-dist-lawid-answerid law-id)
-            (match-define (list law idlaw) law-id)
-            (match-define (list id-answer dist-law-answer) (get-shortest-answer law answers))
-            (define law-dist (dist question law))
-            (list (+ law-dist dist-law-answer) idlaw id-answer))
+        (while (not (zero? (heap-count node-queue)))
+            (match-define (cons u u-dist) (heap-min node-queue))
+            (define u-vector (node-vector u))
+            (define u-neigs (node-neineighbors u))
+            (heap-remove-min! node-queue)
+            (for ([v u-neigs])
+                (define v-vector (node-vector v))
+                (define alt (+ u-dist (dist u-vector v-vector)))
+                (if (< alt (dict-ref distances-from-source v))
+                    (block
+                        (dict-set! distances-from-source v alt)
+                        (dict-set! previous v u)
+                        (heap-add! node-queue (cons v alt)))
+                    void)))
+        
+        (values distances-from-source previous))
 
-        (define updated-laws (map update-law-dist-lawid-answerid laws-enum))
-        (argmin (lambda (x) (first x)) updated-laws))
+    Dijkstra)
 
-    (values get-shortest-answer get-best-law))
+(define dijkstra (dij-from dist))
 
-(define-values (get-shortest-answer get-best-law) (funcs-from dist))
+(define (to-graph question articles answers)
+    (set-node-neineighbors! question articles)
+    (for ([article articles])
+        (set-node-neineighbors! article answers))
+    (for ([answer answers])
+        (set-node-neineighbors! answer (list)))
+    (append (list question) articles answers))
+
+(define (get-distance-article-answer question articles answers)
+    (define graph (to-graph question articles answers))
+    (define-values (distances previous) (dijkstra graph question))
+    (define min-distance
+        (for/fold ([dist +inf.f])
+            ([answer answers])
+            (min dist (dict-ref distances answer))))
+    (define best-answer
+        (for/first ([answer answers]
+            #:when (= min-distance (dict-ref distances answer)))
+            answer))
+    (define best-article (dict-ref previous best-answer))
+    (values min-distance best-article best-answer))

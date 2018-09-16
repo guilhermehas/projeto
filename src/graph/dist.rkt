@@ -1,5 +1,7 @@
 #lang racket
 
+(require math/matrix)
+
 (provide 
     norm
     dif
