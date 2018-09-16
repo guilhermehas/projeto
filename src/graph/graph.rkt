@@ -10,8 +10,11 @@
 
 (provide
     node
+    node-neineighbors
     set-node-neineighbors!
     dijkstra
+    to-graph
+    get-distance-article-answer
 )
 
 (struct node (document vector [neineighbors #:mutable]) #:transparent)
@@ -50,3 +53,25 @@
     Dijkstra)
 
 (define dijkstra (dij-from dist))
+
+(define (to-graph question articles answers)
+    (set-node-neineighbors! question articles)
+    (for ([article articles])
+        (set-node-neineighbors! article answers))
+    (for ([answer answers])
+        (set-node-neineighbors! answer (list)))
+    (append (list question) articles answers))
+
+(define (get-distance-article-answer question articles answers)
+    (define graph (to-graph question articles answers))
+    (define-values (distances previous) (dijkstra graph question))
+    (define min-distance
+        (for/fold ([dist +inf.f])
+            ([answer answers])
+            (min dist (dict-ref distances answer))))
+    (define best-answer
+        (for/first ([answer answers]
+            #:when (= min-distance (dict-ref distances answer)))
+            answer))
+    (define best-article (dict-ref previous best-answer))
+    (values min-distance best-article best-answer))
