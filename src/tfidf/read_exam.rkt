@@ -6,12 +6,13 @@
  txexpr
  xml
  xml/path
+ "../data-structures.rkt"
  )
 
  (provide
   read-exam
-  (struct-out question)
-  (struct-out item)
+  ;(struct-out question)
+  ;(struct-out item)
   )
 
 (define (prova->xexpr fp)
@@ -20,10 +21,10 @@
     #:mode 'text))
 
 ; (question integer? boolean? string? string? item?)
-(struct question (number answer area statement items) #:transparent)
+;(struct question (number answer area statement items) #:transparent)
 
 ; (item symbol? string?)
-(struct item (letter statement) #:transparent)
+;(struct item (letter statement) #:transparent)
 
 ;; homework: use for/fold to get items, statement and correct in one go
 ; xexpr -> (listof question?)

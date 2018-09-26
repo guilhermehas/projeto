@@ -8,11 +8,12 @@
  txexpr
  xml
  xml/path
+ "../data-structures.rkt"
 )
 
 (provide
  read-law
-(struct-out article)
+;(struct-out article)
 )
 
 (define (lei->xexpr fp)
@@ -21,7 +22,7 @@
     #:mode 'text))
 
 ; (article integer? string? )
-(struct article (law art-number statement) #:transparent)
+;(struct article (law art-number statement) #:transparent)
 ;obs: norma > titulo > capitulo > artigo > inciso, paragrafo > alinea, item
 
 
@@ -65,8 +66,8 @@
     (for ((path path-list))
         (set! laws (append
                 (article-list->article-struct
-                    (lei->artigos (lei->xexpr 
-                        (string-append "data/raw/leis/" path))) 
+                    (lei->artigos (lei->xexpr
+                        (string-append "data/raw/leis/" path)))
                         (first (string-split path ".xml")))
                 laws)))
     laws)
