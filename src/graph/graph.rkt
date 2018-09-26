@@ -56,16 +56,22 @@
 
 (define dijkstra (dij-from dist))
 
-(define (to-graph question articles answers)
-    (set-node-neineighbors! question articles)
-    (for ([article articles])
+(define (to-graph question answers . list-articles)
+    (set-node-neineighbors! question (first list-articles))
+
+    (for ([articles1 list-articles]
+          [articles2 (rest list-articles)])
+        (for ([article1 articles1])
+            (set-node-neineighbors! article1 articles2)))
+    
+    (for ([article (last list-articles)])
         (set-node-neineighbors! article answers))
     (for ([answer answers])
         (set-node-neineighbors! answer (list)))
-    (append (list question) articles answers))
+    (append (list question) (apply append list-articles) answers))
 
 (define (get-distance-article-answer question articles answers)
-    (define graph (to-graph question articles answers))
+    (define graph (to-graph question answers articles))
     (define-values (distances previous) (dijkstra graph question))
     (define min-distance
         (for/fold ([dist +inf.f])
