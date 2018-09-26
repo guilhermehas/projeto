@@ -1,13 +1,13 @@
-#lang racket
+#lang racket/base
 
 (require
  racket/string
  racket/list
  txexpr
  xml
- xml/path
- "../data-structures.rkt"
- )
+ xml/path)
+ 
+(require (except-in "../data-structures.rkt" struct:document document document? document-statement document-type))
 
  (provide
   read-exam
@@ -51,14 +51,17 @@
   ;;
   (for/list ([xeq (in-list (get-elements xe))]
              #:unless (string? xeq))
-    (let ([xelems (get-elements xeq)])
-      (question (attr-ref xeq 'number)
+    (let ([xelems (get-elements xeq)]
+          [num (attr-ref xeq 'number)])
+      (define items (get-items xelems))
+      (map (lambda (item) (set-item-question-number! item num)) items)
+      (question num
                 (if (attr-ref xeq 'valid)
                     (get-answer xelems)
                     #f)
                 (attr-ref xeq 'area)
                 (get-statement xelems)
-                (get-items xelems)))))
+                items))))
 
 ;;; (define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
 

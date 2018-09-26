@@ -7,9 +7,9 @@
  racket/list
  txexpr
  xml
- xml/path
- "../data-structures.rkt"
-)
+ xml/path)
+
+(require (except-in "../data-structures.rkt" struct:document document document? document-statement document-type))
 
 (provide
  read-law

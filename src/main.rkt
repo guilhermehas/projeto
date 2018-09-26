@@ -8,8 +8,6 @@
     racket/list
     txexpr
     math/array
-    xml
-    xml/path
     "tfidf/read_exam.rkt"
     "tfidf/read_law.rkt"
     "tfidf/tfidf.rkt"
@@ -38,7 +36,9 @@
 
      (string-append (exams-path) exam)))
 
-  (define (prepare-one-exam exam)
+  ;----------------------------------------------------------
+  ;old definition
+  #;(define (prepare-one-exam exam)
     (define questions-answers '())
     (for ((question exam))
       (set! questions-answers (cons (cons (question-statement question)
@@ -47,15 +47,14 @@
                                     questions-answers)))
     (reverse questions-answers))
 
-  (define (prepare-laws laws)
+  #;(define (prepare-laws laws)
     (map (lambda (x) (article-statement x)) laws))
 
-
-  (define (array->listofvectors array)
+  #;(define (array->listofvectors array)
     (map list->vector (array->list* array)))
 
 
-  (define (apply-tfidf question list-laws)
+  #;(define (apply-tfidf question list-laws)
     (define tfidf-matrix (second (tf-idf (append question list-laws))))
     (define question-vector (array->vector (array-slice-ref tfidf-matrix
                                                             (list (list 0) (::)))))
@@ -66,7 +65,39 @@
       (array->listofvectors
        (array-slice-ref tfidf-matrix (list (:: 6 #f 1) (::)))))
     (values question-vector answers-vector laws-vector))
+  ;----------------------------------------------------------
+  
+  ;new definition
+  
+  ;(listof question) -> (listof (listof documents))
+  (define (prepare-one-exam exam)
+    (for/fold ([questions-answers null]
+               #:result (reverse questions-answers))
+              ([question exam])      
+      (cons (cons (document question)
+                  (map document (question-items question)))
+            questions-answers)))
 
+  ;(listof article) -> (listof documents)
+  (define (prepare-laws laws)
+    (map document laws))
+
+  ;(listof documents) and (listof documents) -> (listof documents), (listof documents) and (listof documents)
+  (define (apply-tfidf question-item-docs laws-docs)
+    (define updated-docs (second (tf-idf (append question list-laws))))
+    (for/fold ([question null]
+               [items null]
+               [laws null]
+               #:result (values (reverse question) (reverse items) (reverse laws)))
+              ([doc (in-list updated-docs)])
+      (cond [(eq? (document-type doc) 'question) (values (cons doc question) items laws)]
+            [(eq? (document-type doc) 'item) (values question (cons doc items) laws)]
+            [(eq? (document-type doc) 'article) (values question items (cons doc laws))])))
+    
+  
+  ;------------------------------------------------------------------
+  ;legado, precisa ser modificado para funcionar na nova definição
+  
   (define (apply-model tfidf-func question list-laws)
     (let-values (((question answers laws) (tfidf-func question list-laws)))
       (get-best-law question laws answers)))

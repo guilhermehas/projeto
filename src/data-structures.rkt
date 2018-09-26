@@ -9,14 +9,16 @@
  (struct-out question)
  (struct-out item)
  (struct-out article)
- (struct-out document))
+ (struct-out document)
+ document-statement
+ document-type)
  
 
 ; (question integer? boolean? string? string? item?)
 (struct question (number answer area statement items) #:transparent)
 
 ; (item symbol? string?)
-(struct item (letter statement) #:transparent)
+(struct item (letter statement [question-number #:auto #:mutable]) #:auto-value 0 #:transparent)
 
 ; (article integer? string? )
 (struct article (law art-number statement) #:transparent)
@@ -33,10 +35,16 @@
           [(question? source) (question-statement source)]
           [(article? source) (article-statement source)])))
 
-(define
+(define (document-type doc)
+  (let ([source (document-source doc)])
+    (cond [(item? source) 'item]
+          [(question? source) 'question]
+          [(article? source) 'article]
+          [else (error "undentified data structure")])))
 
 (define i1 (item 'a "string item 1"))
 (define i2 (item 'b "string item 2"))
+(define i3 (item 'a "string item 1"))
 (define q1 (question 1 'a "ethics" "string question 1" (list i1 i2)))
 (define a1 (article "lei8096" 1 "string article 1"))
 (define doc-item (document i1))
