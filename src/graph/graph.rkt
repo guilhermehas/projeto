@@ -1,23 +1,22 @@
 #lang racket
 
-(require racket/block)
-(require racket/trace)
-(require racket/undefined)
-(require data/heap)
-(require dyoo-while-loop)
+(require
+  racket/block
+  racket/trace
+  racket/undefined
+  data/heap
+  dyoo-while-loop)
 
 (require "dist.rkt"
          "../data-structures.rkt")
 
-(provide    
+(provide
     dijkstra
     to-graph
     get-distance-article-answer
-
     node
     set-node-neineighbors!
-    node-neineighbors
-)
+    node-neineighbors)
 
 ;; retorna o dijkstra a partir de qualquer distancia
 (define (dij-from dist)
@@ -48,7 +47,7 @@
                         (dict-set! previous v u)
                         (heap-add! node-queue (cons v alt)))
                     void)))
-        
+
         (values distances-from-source previous))
 
     Dijkstra)
@@ -64,7 +63,7 @@
           [articles2 (rest list-articles)])
         (for ([article1 articles1])
             (set-node-neineighbors! article1 articles2)))
-    
+
     (for ([article (last list-articles)])
         (set-node-neineighbors! article answers))
     (for ([answer answers])
