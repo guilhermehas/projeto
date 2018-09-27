@@ -17,6 +17,7 @@
 
   (define articles-path (make-parameter "data/raw/articles/"))
   (define exams-path (make-parameter "data/raw/exams/"))
+  (define output-type (make-parameter "simple"))
 
   (define exam-path
     (command-line
@@ -31,6 +32,9 @@
      [("-e" "--exams-path") exampath
                             "Setting path to dir where the laws are archived"
                             (exams-path exampath)]
+     [("-o" "--output-type") outype
+                            "Set the type of output: simple or complete"
+                            (output-type outype)]
 
      #:args (exam)
 
@@ -61,19 +65,10 @@
             [(eq? (document-type doc) 'item) (values question (cons doc items) laws)]
             [(eq? (document-type doc) 'article) (values question items (cons doc laws))])))
 
-
-  (define (convert-output question-struct laws result)
-    (define article (list-ref laws (second result)))
-    (list (question-number question-struct)
-          (third result)
-          (article-law article)
-          (article-art-number article)))
-
   (define (apply-model list-questions list-articles)
     (for/fold ([output null]
-              #:result output)
+              #:result (reverse output))
               ([question list-questions])
-      (displayln question)
       (define-values (q i a) (apply-tfidf question list-articles))
       (define-values (min-dist best-art best-ans)
                       (get-distance-article-answer (first (map node q))
@@ -82,10 +77,15 @@
       (cons (list (first question) min-dist best-art best-ans)
             output)))
   
-  (define (main articles-path exam-path)
+  (define (convert-output output output-type)
+    (cond [(eq? output-type "simple") (displayln "simple")]
+          [(displayln "complete")]))
+
+  (define (main articles-path exam-path output-type)
 
     (let ([list-questions (prepare-one-exam (read-exam exam-path))]
           [list-articles (prepare-articles (read-law articles-path))])
-      (displayln (apply-model list-questions list-articles))))
+      (convert-output (apply-model list-questions list-articles)
+                      output-type)))
 
-  (main (articles-path) exam-path))
+  (main (articles-path) exam-path (output-type)))
