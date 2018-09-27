@@ -1,4 +1,18 @@
-## Start Coding
+## Solving OAB Exams!
+
+### Try it yourself
+
+`racket src/main.rkt 2010-01.xml`
+
+It will print an output which the results are a list of question of the 
+selected exam with the answers:
+
+    -question (document struct)
+    -min-dist (float)
+    -best-article (document struct)
+    -best-answer  (docuemnt struct)
+
+### Installing
 
 From root directory, install dependencies with
 
