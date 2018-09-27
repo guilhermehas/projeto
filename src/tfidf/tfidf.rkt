@@ -16,14 +16,14 @@
               ((compose string-split remove-punctuation string-downcase string-normalize-spaces) string)))
 
 
-;; string --> (list of (list of 'str' float))
+; string --> (list of (list of 'str' float))
 (define (string->tokens string)
   (let* ((list-string (treat-strings string))
          (total (length list-string)))
     (map (lambda (x) (list (first x) (length x)))
          (group-by (lambda (x) x) list-string))))
 
-;;; (list of documents) --> list of (list of strings) and (list of documents)
+; (list of documents) --> list of (list of strings) and (list of documents)
 (define (tf-idf corpus)
   (displayln (length corpus))
   (define-values (matrix-cols corpus-array)
