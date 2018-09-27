@@ -22,7 +22,7 @@
 (struct item (letter statement [question-number #:auto #:mutable]) #:auto-value 0 #:transparent)
 
 ; (article string? integer? string?)
-(struct article (law art-number statement) #:transparent)
+(struct article (law number statement) #:transparent)
 ;obs: norma > titulo > capitulo > artigo > inciso, paragrafo > alinea, item
 
 ;(node document?)
