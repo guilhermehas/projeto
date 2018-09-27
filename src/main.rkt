@@ -36,12 +36,11 @@
 
      (string-append (exams-path) exam)))
 
-  ;new definition
   ;(listof question) -> (listof (listof documents))
   (define (prepare-one-exam exam)
     (for/fold ([questions-answers null]
                #:result (reverse questions-answers))
-              ([question exam])      
+              ([question exam])
       (cons (cons (document question)
                   (map document (question-items question)))
             questions-answers)))
@@ -61,10 +60,7 @@
       (cond [(eq? (document-type doc) 'question) (values (cons doc question) items laws)]
             [(eq? (document-type doc) 'item) (values question (cons doc items) laws)]
             [(eq? (document-type doc) 'article) (values question items (cons doc laws))])))
-    
-  
-  ;------------------------------------------------------------------
-  ;legado, precisa ser modificado para funcionar na nova definição
+
 
   (define (convert-output question-struct laws result)
     (define article (list-ref laws (second result)))
@@ -87,13 +83,12 @@
     (define output (list))
     (for ((question list-questions))
       (define-values (q i a) (apply-tfidf question list-articles))
-      (define-values (min-dist best-art best-ans) 
-                    (get-distance-article-answer (first (map node q)) 
-                                                  (map node a) 
+      (define-values (min-dist best-art best-ans)
+                    (get-distance-article-answer (first (map node q))
+                                                  (map node a)
                                                   (map node i)))
-      (set! output (cons (list (first question) min-dist best-art best-ans) 
-                   git add .output))
-    )
+      (set! output (cons (list (first question) min-dist best-art best-ans)
+                   git add .output)))
 
     (displayln output))
 

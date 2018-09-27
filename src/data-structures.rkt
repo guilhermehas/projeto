@@ -1,5 +1,4 @@
 #lang racket/base
-;(module+ main
 
 (require
   racket/string
@@ -14,7 +13,7 @@
  document-statement
  document-type
  node-vector)
- 
+
 
 ; (question integer? boolean? string? string? item?)
 (struct question (number answer area statement items) #:transparent)
@@ -22,14 +21,18 @@
 ; (item symbol? string?)
 (struct item (letter statement [question-number #:auto #:mutable]) #:auto-value 0 #:transparent)
 
-; (article integer? string?)
+; (article string? integer? string?)
 (struct article (law art-number statement) #:transparent)
 ;obs: norma > titulo > capitulo > artigo > inciso, paragrafo > alinea, item
 
-;(node document? vector?)
+;(node document?)
 (struct node (document [neineighbors #:mutable #:auto])
-    #:auto-value (list)
-    #:transparent)
+  #:auto-value (list)
+  #:guard (lambda (doc name)
+            (unless (document? doc)
+              (error "not valid document"))
+            doc)
+  #:transparent)
 
 (define (node-vector node)
   (document-rep (node-document node)))
@@ -37,6 +40,10 @@
 ; (document (or question? item? article?) )
 (struct document (source [rep #:auto #:mutable])
   #:auto-value  null
+  #:guard (lambda (s name)
+            (unless (or (question? s) (item? s) (article? s))
+              (error "not valid source"))
+            s)
   #:transparent)
 
 (define (document-statement doc)
@@ -60,5 +67,3 @@
 (define doc-item (document i1))
 (define doc-qt (document q1))
 (define doc-art (document a1))
-
-;)

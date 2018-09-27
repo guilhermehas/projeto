@@ -6,23 +6,16 @@
   txexpr
   xml
   xml/path)
- 
+
 (require (except-in "../data-structures.rkt" struct:document document document? document-statement document-type))
 
-(provide
- read-exam
- )
+(provide read-exam)
 
+; xml:documen? -> xexpr?
 (define (exam-xml->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
     #:mode 'text))
-
-; (question integer? boolean? string? string? item?)
-;(struct question (number answer area statement items) #:transparent)
-
-; (item symbol? string?)
-;(struct item (letter statement) #:transparent)
 
 ; xexpr -> (listof question?)
 (define (xexpr->questions xe)
@@ -39,7 +32,7 @@
       (and (txexpr? elem)
            (eq? (get-tag elem) 'statement)
            (string-join (get-elements elem)))))
-  ; (listof ) -> (listof item?)
+  ; (listof xelem?) -> (listof item?)
   (define (get-items xelems)
     (for/list ([elem (in-list xelems)]
                #:when (and (txexpr? elem) (eq? (get-tag elem) 'item)))
@@ -59,5 +52,6 @@
                 (get-statement xelems)
                 items))))
 
+;string? -> (listof question?))
 (define (read-exam path)
-  (xexpr->questions (exam-xml->xexpr path))) 
+  (xexpr->questions (exam-xml->xexpr path)))
