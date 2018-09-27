@@ -1,11 +1,11 @@
 #lang racket/base
 
 (require
- racket/string
- racket/list
- txexpr
- xml
- xml/path)
+  racket/string
+  racket/list
+  txexpr
+  xml
+  xml/path)
 
 (require (except-in "../data-structures.rkt" struct:document document document? document-statement document-type))
 

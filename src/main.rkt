@@ -33,8 +33,8 @@
                             "Setting path to dir where the laws are archived"
                             (exams-path exampath)]
      [("-o" "--output-type") outype
-                            "Set the type of output: simple or complete"
-                            (output-type outype)]
+                             "Set the type of output: simple or complete"
+                             (output-type outype)]
 
      #:args (exam)
 
@@ -65,24 +65,40 @@
             [(eq? (document-type doc) 'item) (values question (cons doc items) laws)]
             [(eq? (document-type doc) 'article) (values question items (cons doc laws))])))
 
-  (define (apply-model list-questions list-articles)
+  (define (apply-model list-question-item-docs laws-docs)
     (for/fold ([output null]
-              #:result (reverse output))
-              ([question list-questions])
-      (define-values (q i a) (apply-tfidf question list-articles))
-      (define-values (min-dist best-art best-ans)
-                      (get-distance-article-answer (first (map node q))
-                                                   (map node a)
-                                                   (map node i)))
-      (cons (list (first question) min-dist best-art best-ans)
+               #:result (reverse output))
+              ([question-item-docs list-question-item-docs])
+      (define-values (q i a) (apply-tfidf question-item-docs laws-docs))
+      (define-values (min-dist best-art-node best-ans-node)
+        (get-distance-article-answer (first (map node q))
+                                     (map node a)
+                                     (map node i)))
+      (define-values (question-doc best-art-doc best-ans-doc)
+        (values (first question-item-docs) (node-document best-art-node) (node-document best-ans-node)))
+      (define-values (correct-answer model-predicted-answer)
+        (values (question-answer (document-source question-doc)) (item-letter (document-source best-ans-doc))))
+      (cons (list question-doc min-dist best-art-doc best-ans-doc correct-answer (eq? correct-answer model-predicted-answer))
             output)))
-  
-  (define (convert-output output output-type)
-    (cond [(eq? output-type "simple") (displayln "simple")]
-          [(displayln "complete")]))
+
+  (define (simple-output output)
+    (append
+     (list
+      (string-join (list "Question: " (number->string (question-number (document-source (car output))))))
+      (cadr output)
+      (string-join (list "Lei:" (article-law (document-source (caddr output))) "| Artigo:" (number->string (article-number (document-source (caddr output))))))
+      (item-letter (document-source (cadddr output))))
+     (cddddr output)))
+
+  (define (convert-output output-list output-type)
+    (cond [(eq? output-type "simple") (displayln "simple")
+                                      (for ((output output-list))
+                                        (displayln (simple-output output)))]
+          [else (displayln "complete")
+                (for ((output output-list))
+                  (displayln output))]))
 
   (define (main articles-path exam-path output-type)
-
     (let ([list-questions (prepare-one-exam (read-exam exam-path))]
           [list-articles (prepare-articles (read-articles articles-path))])
       (convert-output (apply-model list-questions list-articles)

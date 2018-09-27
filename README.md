@@ -4,16 +4,29 @@
 
 `racket src/main.rkt 2010-01.xml`
 
-It will print an output which is a list of questions of the 
-selected exam with the answers:
+It will print an output which is a list of questions of the selected exam with the answers:
+
+`-o simple [default]`
+
+    -question number (string "Question: x")
+    -min-dist (float)
+    -best-article (string "Lei: y | Artigo: z")
+    -best-answer  (symbol)
+    -correct-answer (symbol)
+    -model-correct? (boolean)
+
+`-o complete`
 
     -question (document struct)
     -min-dist (float)
     -best-article (document struct)
     -best-answer  (docuemnt struct)
+    -correct-answer (symbol)
+    -model-correct? (boolean)
+
 
 You can just add more exams at `data/raw/exams/` and call
-them at `racket src/main.rkt \<your-exam>`. 
+them at `racket src/main.rkt \<your-exam>`.
 
 All the articles are saved at `data/raw/articles/`.
 
@@ -108,6 +121,6 @@ raco cover -f html src
 | ------------- |:----------------------------------------------:|
 | Guilherme     | Grafos (dijkstra), testes, cobertura de testes |
 | João          | Juntar partes do projeto                       |
-| Hugo          | TF-IDF  & Data-Structures                      |
+| Hugo          | TF-IDF, Data-Structures e Revisão              |
 | Pedro         | Cálculo de Distâncias                          |
 | Alexandre     | Parser do documento                            |
