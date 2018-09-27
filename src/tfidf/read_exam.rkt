@@ -15,7 +15,7 @@
   ;(struct-out item)
   )
 
-(define (prova->xexpr fp)
+(define (prova-xml->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
     #:mode 'text))
@@ -28,7 +28,7 @@
 
 ;; homework: use for/fold to get items, statement and correct in one go
 ; xexpr -> (listof question?)
-(define (xexpr->exam xe)
+(define (xexpr->questions xe)
   (define (get-letter item)
     (string->symbol (string-upcase (attr-ref item 'letter))))
   (define (get-answer xelems)
@@ -52,7 +52,7 @@
   (for/list ([xeq (in-list (get-elements xe))]
              #:unless (string? xeq))
     (let ([xelems (get-elements xeq)]
-          [num (attr-ref xeq 'number)])
+          [num (string->number (attr-ref xeq 'number))])
       (define items (get-items xelems))
       (map (lambda (item) (set-item-question-number! item num)) items)
       (question num
@@ -66,4 +66,4 @@
 ;;; (define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
 
 (define (read-exam path)
-  (xexpr->exam (prova->xexpr path)))
+  (xexpr->questions (prova-xml->xexpr path)))

@@ -16,7 +16,7 @@
 ;(struct-out article)
 )
 
-(define (lei->xexpr fp)
+(define (lei-xml->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
     #:mode 'text))
@@ -61,13 +61,13 @@
 ;;; (define lei (lei->xexpr "data/raw/leis/lei-8906.xml"))
 
 (define (read-law path)
-    (define path-list (map path->string (directory-list "data/raw/leis/")))
+    (define law-xml-files (map path->string (directory-list path)))
     (define laws '())
-    (for ((path path-list))
+    (for ((law-file law-xml-files))
         (set! laws (append
                 (article-list->article-struct
-                    (lei->artigos (lei->xexpr
-                        (string-append "data/raw/leis/" path)))
-                        (first (string-split path ".xml")))
+                    (lei->artigos (lei-xml->xexpr
+                        (string-append path law-file)))
+                        (first (string-split law-file ".xml")))
                 laws)))
     laws)
