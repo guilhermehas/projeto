@@ -73,7 +73,6 @@
 ;; Calcula a menor distância, o melhor artigo e a melhor resposta de um grafo com uma questão,
 ;; uma camada intermediaria de artigos e uma camada final de respostas
 (define (get-distance-article-answer question articles answers [dist dist])
-
     (define graph (to-graph question answers articles))
     (define-values (distances previous) ((dij-from dist) graph question))
     (define min-distance
