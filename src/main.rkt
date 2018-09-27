@@ -8,26 +8,26 @@
     racket/list
     txexpr
     math/array
-    "tfidf/read_exam.rkt"
-    "tfidf/read_law.rkt"
+    "parsers/read_exam.rkt"
+    "parsers/read_law.rkt"
     "tfidf/tfidf.rkt"
     "graph/graph.rkt"
     "data-structures.rkt"
     )
 
-  (define laws-path (make-parameter "data/raw/leis/"))
-  (define exams-path (make-parameter "data/raw/provas/"))
+  (define articles-path (make-parameter "data/raw/articles/"))
+  (define exams-path (make-parameter "data/raw/exams/"))
 
-  (define cmd-line
+  (define exam-path
     (command-line
      #:program "projeto-eda"
      #:usage-help
      "Solve OAB exams through tf-idf"
      "---------------------"
      #:once-each
-     [("-l" "--laws-path") lawspath
+     [("-l" "--articles-path") lawspath
                              "Setting path to dir where the laws are archived"
-                             (laws-path lawspath)]
+                             (articles-path lawspath)]
      [("-e" "--exams-path") exampath
                              "Setting path to dir where the laws are archived"
                              (exams-path exampath)]
@@ -36,44 +36,7 @@
 
      (string-append (exams-path) exam)))
 
-  ;----------------------------------------------------------
-  ;old definition
-  #;(define (prepare-one-exam exam)
-    (define questions-answers '())
-    (for ((question exam))
-      (set! questions-answers (cons (cons (question-statement question)
-                                          (map (lambda (x) (item-statement x))
-                                               (question-items question)))
-                                    questions-answers)))
-    (reverse questions-answers))
-
-  #;(define (prepare-laws laws)
-    (map (lambda (x) (article-statement x)) laws))
-
-  #;(define (array->listofvectors array)
-    (map list->vector (array->list* array)))
-
-<<<<<<< HEAD
-  (define (apply-tfidf question list-laws)
-    (displayln "Calculating TFIDF")
-=======
-
-  #;(define (apply-tfidf question list-laws)
->>>>>>> 2c48b65a853b48db3325b1a01f780c300e9837c6
-    (define tfidf-matrix (second (tf-idf (append question list-laws))))
-    (define question-vector (array->vector (array-slice-ref tfidf-matrix
-                                                            (list (list 0) (::)))))
-    (define answers-vector
-      (array->listofvectors
-       (array-slice-ref tfidf-matrix (list (:: 1 5 1) (::)))))
-    (define laws-vector
-      (array->listofvectors
-       (array-slice-ref tfidf-matrix (list (:: 6 #f 1) (::)))))
-    (values question-vector answers-vector laws-vector))
-  ;----------------------------------------------------------
-  
   ;new definition
-  
   ;(listof question) -> (listof (listof documents))
   (define (prepare-one-exam exam)
     (for/fold ([questions-answers null]
@@ -84,12 +47,12 @@
             questions-answers)))
 
   ;(listof article) -> (listof documents)
-  (define (prepare-laws laws)
-    (map document laws))
+  (define (prepare-articles art)
+    (map document art))
 
   ;(listof documents) and (listof documents) -> (listof documents), (listof documents) and (listof documents)
   (define (apply-tfidf question-item-docs laws-docs)
-    (define updated-docs (second (tf-idf (append question list-laws))))
+    (define updated-docs (second (tf-idf (append question-item-docs laws-docs))))
     (for/fold ([question null]
                [items null]
                [laws null]
@@ -102,11 +65,6 @@
   
   ;------------------------------------------------------------------
   ;legado, precisa ser modificado para funcionar na nova definição
-  
-  (define (apply-model tfidf-func question list-laws)
-    (let-values (((question answers laws) (tfidf-func question list-laws)))
-      (displayln "Applying Model")
-      (get-best-law question laws answers)))
 
   (define (convert-output question-struct laws result)
     (define article (list-ref laws (second result)))
@@ -115,22 +73,28 @@
           (article-law article)
           (article-art-number article)))
 
-  (define (main laws-path cmd-line)
+  (define (main articles-path exam-path)
 
-    (define laws (read-law laws-path))
-    (define exam (read-exam cmd-line))
+    (displayln articles-path)
+    (displayln exam-path)
+
+    (define articles (read-law articles-path))
+    (define exam (read-exam exam-path))
 
     (define list-questions (prepare-one-exam exam))
-    (define list-laws (prepare-laws laws))
+    (define list-articles (prepare-articles articles))
 
     (define output (list))
-    (for ((question list-questions)
-          (question-exam exam))
-       (displayln (question-number question-exam))
-       (set! output
-             (cons (convert-output question-exam laws
-              (apply-model apply-tfidf question list-laws)) output)))
-    (reverse output)
+    (for ((question list-questions))
+      (define-values (q i a) (apply-tfidf question list-articles))
+      (define-values (min-dist best-art best-ans) 
+                    (get-distance-article-answer (first (map node q)) 
+                                                  (map node a) 
+                                                  (map node i)))
+      (set! output (cons (list (first question) min-dist best-art best-ans) 
+                   git add .output))
     )
 
-  (main laws-path cmd-line))
+    (displayln output))
+
+  (main (articles-path) exam-path))

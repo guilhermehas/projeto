@@ -19,11 +19,6 @@
     node-neineighbors
 )
 
-;; Estrutura no do grafo, a partir do documento, vetor representando o documento e seus vizinhos
-(struct node (document vector [neineighbors #:mutable #:auto])
-    #:auto-value (list)
-    #:transparent)
-
 ;; retorna o dijkstra a partir de qualquer distancia
 (define (dij-from dist)
     (define (Dijkstra graph source)
@@ -79,6 +74,7 @@
 ;; Calcula a menor distância, o melhor artigo e a melhor resposta de um grafo com uma questão,
 ;; uma camada intermediaria de artigos e uma camada final de respostas
 (define (get-distance-article-answer question articles answers)
+
     (define graph (to-graph question answers articles))
     (define-values (distances previous) (dijkstra graph question))
     (define min-distance

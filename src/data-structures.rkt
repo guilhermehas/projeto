@@ -12,7 +12,8 @@
  (struct-out document)
  (struct-out node)
  document-statement
- document-type)
+ document-type
+ node-vector)
  
 
 ; (question integer? boolean? string? string? item?)
