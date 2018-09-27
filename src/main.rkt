@@ -25,7 +25,7 @@
      "Solve OAB exams through tf-idf"
      "---------------------"
      #:once-each
-     [("-l" "--articles-path") lawspath
+     [("-a" "--articles-path") lawspath
                                "Setting path to dir where the laws are archived"
                                (articles-path lawspath)]
      [("-e" "--exams-path") exampath
@@ -69,27 +69,23 @@
           (article-law article)
           (article-art-number article)))
 
-  (define (main articles-path exam-path)
-
-    (displayln articles-path)
-    (displayln exam-path)
-
-    (define articles (read-law articles-path))
-    (define exam (read-exam exam-path))
-
-    (define list-questions (prepare-one-exam exam))
-    (define list-articles (prepare-articles articles))
-
-    (define output (list))
-    (for ((question list-questions))
+  (define (apply-model list-questions list-articles)
+    (for/fold ([output null]
+              #:result output)
+              ([question list-questions])
+      (displayln question)
       (define-values (q i a) (apply-tfidf question list-articles))
       (define-values (min-dist best-art best-ans)
-        (get-distance-article-answer (first (map node q))
-                                     (map node a)
-                                     (map node i)))
-      (set! output (cons (list (first question) min-dist best-art best-ans)
-                         output)))
+                      (get-distance-article-answer (first (map node q))
+                                                   (map node a)
+                                                   (map node i)))
+      (cons (list (first question) min-dist best-art best-ans)
+            output)))
+  
+  (define (main articles-path exam-path)
 
-    (displayln output))
+    (let ([list-questions (prepare-one-exam (read-exam exam-path))]
+          [list-articles (prepare-articles (read-law articles-path))])
+      (displayln (apply-model list-questions list-articles))))
 
   (main (articles-path) exam-path))
