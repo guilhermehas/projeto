@@ -6,15 +6,17 @@
 (require data/heap)
 (require dyoo-while-loop)
 
-(require "dist.rkt")
+(require "dist.rkt"
+         "../data-structures.rkt")
 
-(provide
-    node
-    node-neineighbors
-    set-node-neineighbors!
+(provide    
     dijkstra
     to-graph
     get-distance-article-answer
+
+    node
+    set-node-neineighbors!
+    node-neineighbors
 )
 
 ;; Estrutura no do grafo, a partir do documento, vetor representando o documento e seus vizinhos
