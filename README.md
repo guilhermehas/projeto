@@ -43,3 +43,12 @@ To execute coverage command, run:
 ```bash
 raco cover -f html src
 ```
+
+### Participações
+| Aluno         | Tarefas                                        |
+| ------------- |:----------------------------------------------:| 
+| Guilherme     | Grafos (dijkstra), testes, cobertura de testes |
+| João          | Juntar partes do projeto                       |
+| Hugo          | TF-IDF                                         |
+| Pedro         | Cálculo de Distâncias                          |
+| Alexandre     | Parser do documento                            |
