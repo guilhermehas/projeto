@@ -14,7 +14,7 @@
 (define (treat-strings string)
   (filter-not (λ (e) (set-member? stopwords e))
               ((compose string-split remove-punctuation string-downcase string-normalize-spaces) string)))
-                         
+
 
 ;; string --> (list of (list of 'str' float))
 (define (string->tokens string)
@@ -25,26 +25,30 @@
 
 ;;; (list of documents) --> list of (list of strings) and (list of documents)
 (define (tf-idf corpus)
+<<<<<<< HEAD
   (displayln (length corpus))
-  (define-values (matrix-cols corpus-array) 
-                 (apply values (apply dtm 
-                                      (map string->tokens 
+  (define-values (matrix-cols corpus-array)
+                 (apply values (apply dtm
+                                      (map string->tokens
                                       (map document-statement corpus)))))
-  #;(for ([doc (in-list corpus)]
-          [i (in-naturals)])
-      (set-document-rep! doc (array->vector (array-slice-ref corpus-array (list i (::))))))
-  #;(list matrix-cols corpus)
+=======
+  (define-values (matrix-cols corpus-array) (apply values (apply dtm (map string->tokens (map document-statement corpus)))))
+>>>>>>> 7a404e73d353f30808fb192390885a7c7726a0fc
   (list matrix-cols (for/fold ([updated-corpus null]
                                #:result (reverse updated-corpus))
                               ([doc (in-list corpus)]
                                [i (in-naturals)])
                       (define doc-updated (document (document-source doc)))
-                      (set-document-rep! doc-updated 
-                                        (array->vector 
-                                          (array-slice-ref corpus-array 
-                                                           (list i (::)))))                      
+<<<<<<< HEAD
+                      (set-document-rep! doc-updated
+                                        (array->vector
+                                          (array-slice-ref corpus-array
+                                                           (list i (::)))))
+=======
+                      (set-document-rep! doc-updated (array->vector (array-slice-ref corpus-array (list i (::)))))
+>>>>>>> 7a404e73d353f30808fb192390885a7c7726a0fc
                       (cons doc-updated updated-corpus))))
-  
+
 
 
 ;Definições para exemplos e testes
