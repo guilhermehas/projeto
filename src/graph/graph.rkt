@@ -6,20 +6,13 @@
 (require data/heap)
 (require dyoo-while-loop)
 
-(require "dist.rkt")
+(require "dist.rkt"
+         "../data-structures.rkt")
 
-(provide
-    node
-    node-neineighbors
-    set-node-neineighbors!
+(provide    
     dijkstra
     to-graph
-    get-distance-article-answer
-)
-
-(struct node (document vector [neineighbors #:mutable #:auto])
-    #:auto-value (list)
-    #:transparent)
+    get-distance-article-answer)
 
 (define (dij-from dist)
     (define (Dijkstra graph source)
