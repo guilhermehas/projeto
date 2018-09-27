@@ -12,6 +12,31 @@ if its package is already intalled, update the dependencies
 
 `raco pkg update --link src`
 
+### Graph
+
+Struct that defines the node in graph
+```racket
+(struct node (document vector [neineighbors #:mutable #:auto])
+    #:auto-value (list)
+    #:transparent)
+```
+
+Function that returns Dijkstra algorithm from a distance function
+```racket
+(dij-from dist)
+```
+
+Transform into graph from question, answers and a list of intermediary layers of articles
+```racket
+(to-graph question answers . list-articles)
+```
+
+Calculates the shortest distance, the best article and the best answer of a graph with a question, an intermediate layer of articles and a final layer of answers
+```racket
+(get-distance-article-answer question articles answers)
+```
+
+
 ### TF-IDF
 
 ```racket
