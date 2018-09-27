@@ -72,17 +72,17 @@
 
 ;; Calcula a menor distância, o melhor artigo e a melhor resposta de um grafo com uma questão,
 ;; uma camada intermediaria de artigos e uma camada final de respostas
-(define (get-distance-article-answer question articles answers)
+(define (get-distance-article-answer question articles answers [dist dist])
 
-  (define graph (to-graph question answers articles))
-  (define-values (distances previous) (dijkstra graph question))
-  (define min-distance
-    (for/fold ([dist +inf.f])
-              ([answer answers])
-      (min dist (dict-ref distances answer))))
-  (define best-answer
-    (for/first ([answer answers]
-                #:when (= min-distance (dict-ref distances answer)))
-      answer))
-  (define best-article (dict-ref previous best-answer))
-  (values min-distance best-article best-answer))
+    (define graph (to-graph question answers articles))
+    (define-values (distances previous) ((dij-from dist) graph question))
+    (define min-distance
+        (for/fold ([dist +inf.f])
+            ([answer answers])
+            (min dist (dict-ref distances answer))))
+    (define best-answer
+        (for/first ([answer answers]
+            #:when (= min-distance (dict-ref distances answer)))
+            answer))
+    (define best-article (dict-ref previous best-answer))
+    (values min-distance best-article best-answer))
