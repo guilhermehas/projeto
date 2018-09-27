@@ -10,6 +10,7 @@
  (struct-out item)
  (struct-out article)
  (struct-out document)
+ (struct-out node)
  document-statement
  document-type)
  
@@ -20,9 +21,17 @@
 ; (item symbol? string?)
 (struct item (letter statement [question-number #:auto #:mutable]) #:auto-value 0 #:transparent)
 
-; (article integer? string? )
+; (article integer? string?)
 (struct article (law art-number statement) #:transparent)
 ;obs: norma > titulo > capitulo > artigo > inciso, paragrafo > alinea, item
+
+;(node document? vector?)
+(struct node (document [neineighbors #:mutable #:auto])
+    #:auto-value (list)
+    #:transparent)
+
+(define (node-vector node)
+  (document-rep (node-document node)))
 
 ; (document (or question? item? article?) )
 (struct document (source [rep #:auto #:mutable])
