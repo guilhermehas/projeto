@@ -9,7 +9,7 @@
     txexpr
     math/array
     "parsers/read_exam.rkt"
-    "parsers/read_law.rkt"
+    "parsers/read_articles.rkt"
     "tfidf/tfidf.rkt"
     "graph/graph.rkt"
     "data-structures.rkt"
@@ -84,7 +84,7 @@
   (define (main articles-path exam-path output-type)
 
     (let ([list-questions (prepare-one-exam (read-exam exam-path))]
-          [list-articles (prepare-articles (read-law articles-path))])
+          [list-articles (prepare-articles (read-articles articles-path))])
       (convert-output (apply-model list-questions list-articles)
                       output-type)))
 
