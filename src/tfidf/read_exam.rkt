@@ -1,33 +1,34 @@
-#lang racket
+#lang racket/base
 
 (require
  racket/string
  racket/list
  txexpr
  xml
- xml/path
- )
+ xml/path)
+ 
+(require (except-in "../data-structures.rkt" struct:document document document? document-statement document-type))
 
  (provide
   read-exam
-  (struct-out question)
-  (struct-out item)
+  ;(struct-out question)
+  ;(struct-out item)
   )
 
-(define (prova->xexpr fp)
+(define (prova-xml->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
     #:mode 'text))
 
 ; (question integer? boolean? string? string? item?)
-(struct question (number answer area statement items) #:transparent)
+;(struct question (number answer area statement items) #:transparent)
 
 ; (item symbol? string?)
-(struct item (letter statement) #:transparent)
+;(struct item (letter statement) #:transparent)
 
 ;; homework: use for/fold to get items, statement and correct in one go
 ; xexpr -> (listof question?)
-(define (xexpr->exam xe)
+(define (xexpr->questions xe)
   (define (get-letter item)
     (string->symbol (string-upcase (attr-ref item 'letter))))
   (define (get-answer xelems)
@@ -50,16 +51,19 @@
   ;;
   (for/list ([xeq (in-list (get-elements xe))]
              #:unless (string? xeq))
-    (let ([xelems (get-elements xeq)])
-      (question (attr-ref xeq 'number)
+    (let ([xelems (get-elements xeq)]
+          [num (string->number (attr-ref xeq 'number))])
+      (define items (get-items xelems))
+      (map (lambda (item) (set-item-question-number! item num)) items)
+      (question num
                 (if (attr-ref xeq 'valid)
                     (get-answer xelems)
                     #f)
                 (attr-ref xeq 'area)
                 (get-statement xelems)
-                (get-items xelems)))))
+                items))))
 
 ;;; (define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
 
 (define (read-exam path)
-  (xexpr->exam (prova->xexpr path)))
+  (xexpr->questions (prova-xml->xexpr path)))
