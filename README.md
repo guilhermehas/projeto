@@ -4,13 +4,23 @@
 
 `racket src/main.rkt 2010-01.xml`
 
-It will print an output which the results are a list of question of the 
+It will print an output which is a list of questions of the 
 selected exam with the answers:
 
     -question (document struct)
     -min-dist (float)
     -best-article (document struct)
     -best-answer  (docuemnt struct)
+
+You can just add more exams at `data/raw/exams/` and call
+them at `racket src/main.rkt \<your-exam>`. 
+
+All the articles are saved at `data/raw/articles/`.
+
+If you need to change this path, you can pass a modifier
+
+`-a --articles-path` to change the articles path
+`-e --exams-path` to change the exams path
 
 ### Installing
 
@@ -22,7 +32,7 @@ raco pkg install https://github.com/n3mo/data-science.git
 ```
 
 
-if its package is already intalled, update the dependencies
+if its packages are already intalled, update the dependencies
 
 `raco pkg update --link src`
 
