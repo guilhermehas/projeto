@@ -88,7 +88,7 @@
                                                   (map node a)
                                                   (map node i)))
       (set! output (cons (list (first question) min-dist best-art best-ans)
-                   git add .output)))
+                   output)))
 
     (displayln output))
 
