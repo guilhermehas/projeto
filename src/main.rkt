@@ -26,17 +26,17 @@
      "---------------------"
      #:once-each
      [("-l" "--articles-path") lawspath
-                             "Setting path to dir where the laws are archived"
-                             (articles-path lawspath)]
+                               "Setting path to dir where the laws are archived"
+                               (articles-path lawspath)]
      [("-e" "--exams-path") exampath
-                             "Setting path to dir where the laws are archived"
-                             (exams-path exampath)]
+                            "Setting path to dir where the laws are archived"
+                            (exams-path exampath)]
 
      #:args (exam)
 
      (string-append (exams-path) exam)))
 
-  ;(listof question) -> (listof (listof documents))
+  ;(listof question?) -> (listof (listof documents?))
   (define (prepare-one-exam exam)
     (for/fold ([questions-answers null]
                #:result (reverse questions-answers))
@@ -45,9 +45,9 @@
                   (map document (question-items question)))
             questions-answers)))
 
-  ;(listof article) -> (listof documents)
+  ;(listof (listof article?) -> (listof documents?)
   (define (prepare-articles art)
-    (map document art))
+    (map document (flatten art)))
 
   ;(listof documents) and (listof documents) -> (listof documents), (listof documents) and (listof documents)
   (define (apply-tfidf question-item-docs laws-docs)
@@ -84,11 +84,11 @@
     (for ((question list-questions))
       (define-values (q i a) (apply-tfidf question list-articles))
       (define-values (min-dist best-art best-ans)
-                    (get-distance-article-answer (first (map node q))
-                                                  (map node a)
-                                                  (map node i)))
+        (get-distance-article-answer (first (map node q))
+                                     (map node a)
+                                     (map node i)))
       (set! output (cons (list (first question) min-dist best-art best-ans)
-                   output)))
+                         output)))
 
     (displayln output))
 
