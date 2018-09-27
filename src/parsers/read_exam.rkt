@@ -13,7 +13,7 @@
  read-exam
  )
 
-(define (prova-xml->xexpr fp)
+(define (exam-xml->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
     #:mode 'text))
@@ -60,4 +60,4 @@
                 items))))
 
 (define (read-exam path)
-  (xexpr->questions (prova-xml->xexpr path)))
+  (xexpr->questions (exam-xml->xexpr path))) 
