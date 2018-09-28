@@ -4,6 +4,10 @@
 
 `racket src/main.rkt 2010-01.xml`
 
+For a quick run, try
+
+`racket src/main.rkt -a data/raw/articles-test/ teste.xml`
+
 It will print an output which is a list of questions of the selected exam with the answers:
 
 `-o simple [default]`
@@ -40,8 +44,9 @@ If you need to change this path, you can pass a modifier
 From root directory, install dependencies with
 
 ```
-raco pkg install src
 raco pkg install https://github.com/n3mo/data-science.git
+raco pkg install while-loop
+raco pkg install src/
 ```
 
 
