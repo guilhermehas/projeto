@@ -35,10 +35,10 @@
                             "Setting path to dir where the laws are archived"
                             (exams-path exampath)]
      [("-o" "--output-type") outype
-                             "Set the type of output: simple or complete"
+                             "Set the type of output: simple, struct-simple or complete"
                              (output-type outype)]
      [("-d" "--distance-function") distance-function
-                                   "Set the type of output: simple or complete"
+                                   "Set the distance function: dist (euclidian) or cos-dist (cosine)"
                                    (dist-fun distance-function)]
      #:args (exam)
 
@@ -89,25 +89,38 @@
         (values (first question-item-docs) (node-document best-art-node) (node-document best-ans-node)))
       (define-values (correct-answer model-predicted-answer)
         (values (question-answer (document-source question-doc)) (item-letter (document-source best-ans-doc))))
-      (cons (list question-doc min-dist best-art-doc best-ans-doc correct-answer (eq? correct-answer model-predicted-answer))
+      (cons (model-result question-doc min-dist best-art-doc best-ans-doc correct-answer (eq? correct-answer model-predicted-answer))
             output)))
 
+
   (define (simple-output output)
-    (append
-     (list
-      (string-join (list "Question: " (number->string (question-number (document-source (car output))))))
-      (cadr output)
-      (string-join (list "Lei:" (article-law (document-source (caddr output))) "| Artigo:" (number->string (article-number (document-source (caddr output))))))
-      (item-letter (document-source (cadddr output))))
-     (cddddr output)))
+    (list
+     (string-join (list "Question: " (number->string (question-number (document-source (model-result-question output))))))
+     (model-result-min-dist output)
+     (string-join (list "Lei:" (article-law (document-source (model-result-best-art output))) "| Artigo:" (number->string (article-number (document-source (model-result-best-art output))))))
+     (item-letter (document-source (model-result-best-ans output)))
+     (model-result-correct-answer output)
+     (model-result-correct? output)))
+
+  (define (struct-simple-output output)
+    (model-result-simple
+     (question-number (document-source (model-result-question output)))
+     (model-result-min-dist output)
+     (article-law (document-source (model-result-best-art output)))
+     (article-number (document-source (model-result-best-art output)))
+     (item-letter (document-source (model-result-best-ans output)))
+     (model-result-correct-answer output)
+     (model-result-correct? output)))
 
   (define (convert-output output-list output-type)
-    (cond [(eq? output-type "simple") (displayln "simple")
-                                      (for ((output output-list))
-                                        (displayln (simple-output output)))]
-          [else (displayln "complete")
-                (for ((output output-list))
-                  (displayln output))]))
+    (let ([ot (string->symbol output-type)])
+      (cond [(eq? ot 'simple) (for ((output output-list))
+                                (displayln (simple-output output)))]
+            [(eq? ot 'struct-simple) (for ((output output-list))
+                                       (displayln (struct-simple-output output)))]
+            [(eq? ot 'complete) (for ((output output-list))
+                                  (displayln output))]
+            [else (error "Not a valid output format")])))
 
   (define (main articles-path exam-path output-type)
     (let ([list-questions (prepare-one-exam (read-exam exam-path))]

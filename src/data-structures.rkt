@@ -10,6 +10,8 @@
  (struct-out article)
  (struct-out document)
  (struct-out node)
+ (struct-out model-result)
+ (struct-out model-result-simple)
  document-statement
  document-type
  node-vector)
@@ -24,6 +26,12 @@
 ; (article string? integer? string?)
 (struct article (law number statement) #:transparent)
 ;obs: norma > titulo > capitulo > artigo > inciso, paragrafo > alinea, item
+
+; (model-result document? number? document? document? symbol? bool?)
+(struct model-result (question min-dist best-art best-ans correct-answer correct?) #:transparent)
+
+; (model-result-simple number? number? string? number? symbol? symbol? bool?)
+(struct model-result-simple (question min-dist best-law best-art best-ans correct-answer correct?) #:transparent)
 
 ;(node document?)
 (struct node (document [neineighbors #:mutable #:auto])
