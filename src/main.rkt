@@ -12,12 +12,14 @@
     "parsers/read_articles.rkt"
     "tfidf/tfidf.rkt"
     "graph/graph.rkt"
+    "graph/dist.rkt"
     "data-structures.rkt"
     )
 
   (define articles-path (make-parameter "data/raw/articles/"))
   (define exams-path (make-parameter "data/raw/exams/"))
   (define output-type (make-parameter "simple"))
+  (define dist-fun (make-parameter "dist"))
 
   (define exam-path
     (command-line
@@ -35,10 +37,18 @@
      [("-o" "--output-type") outype
                              "Set the type of output: simple or complete"
                              (output-type outype)]
-
+     [("-d" "--distance-function") distance-function
+                                   "Set the type of output: simple or complete"
+                                   (dist-fun distance-function)]
      #:args (exam)
 
      (string-append (exams-path) exam)))
+
+  (define dist-f
+    (let ([d (string->symbol (dist-fun))])
+      (cond [(eq? d 'dist) dist]
+            [(eq? d 'cos-dist) cos-dist]
+            [else (error "Not a valid distance function")])))
 
   ;(listof question?) -> (listof (listof documents?))
   (define (prepare-one-exam exam)
@@ -73,7 +83,8 @@
       (define-values (min-dist best-art-node best-ans-node)
         (get-distance-article-answer (first (map node q))
                                      (map node a)
-                                     (map node i)))
+                                     (map node i)
+                                     dist-f))
       (define-values (question-doc best-art-doc best-ans-doc)
         (values (first question-item-docs) (node-document best-art-node) (node-document best-ans-node)))
       (define-values (correct-answer model-predicted-answer)

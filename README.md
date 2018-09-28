@@ -29,6 +29,8 @@ It will print an output which is a list of questions of the selected exam with t
     -model-correct? (boolean)
 
 
+You may also change the distance function with the short command `-d` or its longer form `--distance-function`. Currently, there are Euclidian Distance [default] and Cosine Distance (`-d cos-dist`).
+
 You can just add more exams at `data/raw/exams/` and call
 them at `racket src/main.rkt \<your-exam>`.
 
