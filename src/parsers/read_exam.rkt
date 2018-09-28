@@ -1,33 +1,24 @@
-#lang racket
+#lang racket/base
 
 (require
- racket/string
- racket/list
- txexpr
- xml
- xml/path
- )
+  racket/string
+  racket/list
+  txexpr
+  xml
+  xml/path)
 
- (provide
-  read-exam
-  (struct-out question)
-  (struct-out item)
-  )
+(require (except-in "../data-structures.rkt" struct:document document document? document-statement document-type))
 
-(define (prova->xexpr fp)
+(provide read-exam)
+
+; xml:documen? -> xexpr?
+(define (exam-xml->xexpr fp)
   (with-input-from-file fp
     (lambda () (xml->xexpr (document-element (read-xml (current-input-port)))))
     #:mode 'text))
 
-; (question integer? boolean? string? string? item?)
-(struct question (number answer area statement items) #:transparent)
-
-; (item symbol? string?)
-(struct item (letter statement) #:transparent)
-
-;; homework: use for/fold to get items, statement and correct in one go
 ; xexpr -> (listof question?)
-(define (xexpr->exam xe)
+(define (xexpr->questions xe)
   (define (get-letter item)
     (string->symbol (string-upcase (attr-ref item 'letter))))
   (define (get-answer xelems)
@@ -41,25 +32,26 @@
       (and (txexpr? elem)
            (eq? (get-tag elem) 'statement)
            (string-join (get-elements elem)))))
-  ; (listof ) -> (listof item?)
+  ; (listof xelem?) -> (listof item?)
   (define (get-items xelems)
     (for/list ([elem (in-list xelems)]
                #:when (and (txexpr? elem) (eq? (get-tag elem) 'item)))
       (item (get-letter elem)
             (string-join (get-elements elem)))))
-  ;;
   (for/list ([xeq (in-list (get-elements xe))]
              #:unless (string? xeq))
-    (let ([xelems (get-elements xeq)])
-      (question (attr-ref xeq 'number)
+    (let ([xelems (get-elements xeq)]
+          [num (string->number (attr-ref xeq 'number))])
+      (define items (get-items xelems))
+      (map (lambda (item) (set-item-question-number! item num)) items)
+      (question num
                 (if (attr-ref xeq 'valid)
                     (get-answer xelems)
                     #f)
                 (attr-ref xeq 'area)
                 (get-statement xelems)
-                (get-items xelems)))))
+                items))))
 
-;;; (define prova (prova->xexpr "data/raw/provas/2010-01.xml"))
-
+;string? -> (listof question?))
 (define (read-exam path)
-  (xexpr->exam (prova->xexpr path)))
+  (xexpr->questions (exam-xml->xexpr path)))

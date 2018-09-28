@@ -29,13 +29,32 @@
     
     (define art1 (node "art1" (vector 1)))
     (define art2 (node "art2" (vector -2)))
+    (define articles1 (list art1 art2))
+
+    (define art3 (node "art3" (vector 1)))
+    (define art4 (node "art4" (vector -2)))
+    (define articles2 (list art3 art4))
+
+    (define ans1 (node "ans1" (vector -3)))
+    (define ans2 (node "ans2" (vector 7)))
+    (define answers (list ans1 ans2))
+
+    (define graph (to-graph question answers articles1 articles2))
+    (check-equal? graph (list question art1 art2 art3 art4 ans1 ans2)))
+
+
+(block
+    (define question (node "q" (vector 0)))
+    
+    (define art1 (node "art1" (vector 1)))
+    (define art2 (node "art2" (vector -2)))
     (define articles (list art1 art2))
 
     (define ans1 (node "ans1" (vector -3)))
     (define ans2 (node "ans2" (vector 7)))
     (define answers (list ans1 ans2))
 
-    (define graph (to-graph question articles answers))
+    (define graph (to-graph question answers articles))
     (check-equal? graph (list question art1 art2 ans1 ans2))
     (check-equal? (node-neineighbors question) articles)
     (check-equal? (node-neineighbors art1) answers)
