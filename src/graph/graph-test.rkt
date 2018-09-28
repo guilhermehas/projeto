@@ -3,7 +3,8 @@
 (require rackunit)
 (require racket/block)
 
-(require "graph.rkt")
+(require "graph.rkt"
+         "../data-structures.rkt")
 
 (block
     (define node1 (node "n1" (vector 0)))
