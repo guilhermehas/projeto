@@ -46,6 +46,7 @@ From root directory, install dependencies with
 ```
 raco pkg install https://github.com/n3mo/data-science.git
 raco pkg install while-loop
+raco pkg install txexpr
 raco pkg install src/
 ```
 
