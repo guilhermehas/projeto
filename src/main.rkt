@@ -38,7 +38,7 @@
                              "Set the type of output: simple, struct-simple or complete"
                              (output-type outype)]
      [("-d" "--distance-function") distance-function
-                                   "Set the distance function: dist (euclidian) or cos-dist (cosine)"
+                                   "Set the distance function: dist (euclidian) or cos-dist (cosine similarities)"
                                    (dist-fun distance-function)]
      #:args (exam)
 

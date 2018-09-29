@@ -46,9 +46,9 @@ The model-result struct containing
 
 
 #### Distances
-`-d --distance-function` 
+`-d --distance-function`
 
-You may also change the distance function with the short command `-d` or its longer form `--distance-function`. Currently, there are Euclidian Distance `dist` [default] and Cosine Distance `cos-dist`.
+You may also change the distance function with the short command `-d` or its longer form `--distance-function`. Currently, there are Euclidian Distance `dist` [default] and Cosine Similarities `cos-dist`.
 
 #### Differente Files and File Pahts
 
