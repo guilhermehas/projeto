@@ -12,22 +12,45 @@ It will print an output which is a list of questions of the selected exam with t
 
 `-o simple [default]`
 
-    -question number (string "Question: x")
-    -min-dist (float)
-    -best-article (string "Lei: y | Artigo: z")
+A list containing
+
+    -question (string)
+    -min-dist (number)
+    -best-article (string)
     -best-answer  (symbol)
     -correct-answer (symbol)
     -model-correct? (boolean)
 
+`-o struct-simple`
+
+The model-result-simple struct containing
+
+    -question (number)
+    -min-dist (number)
+    -best-law (string)
+    -best-art (number)
+    -best-answer  (symbol)
+    -correct-answer (symbol)
+    -correct? (boolean)
+
 `-o complete`
 
-    -question (document struct)
-    -min-dist (float)
-    -best-article (document struct)
-    -best-answer  (docuemnt struct)
-    -correct-answer (symbol)
-    -model-correct? (boolean)
+The model-result struct containing
 
+    -question (document)
+    -min-dist (number)
+    -best-article (document)
+    -best-answer  (docuemnt)
+    -correct-answer (symbol)
+    -correct? (boolean)
+
+
+#### Distances
+`-d --distance-function`
+
+You may also change the distance function with the short command `-d` or its longer form `--distance-function`. Currently, there are Euclidian Distance `dist` [default] and Cosine Similarities `cos-dist`.
+
+#### Differente Files and File Pahts
 
 You can just add more exams at `data/raw/exams/` and call
 them at `racket src/main.rkt \<your-exam>`.
